@@ -1,7 +1,26 @@
+"""
+-------------------------------------------------------
+CP467 Assignment 1 Custom Functions Library
+-------------------------------------------------------
+Author:  Jashandeep Singh
+ID:      169018282
+Email:   sing8282@mylaurier.ca
+__updated__ = "2024-09-24"
+-------------------------------------------------------
+"""
+
+# IMPORTS
 from cv2 import resize, imread, imwrite
 from os import path, makedirs
 
-REDUCTION_FACTOR = .25
+
+# CONSTANTS
+SIZE_FACTOR = 0.5
+
+
+def nearnest_neighbour_interpolation_scratch(img):
+    print(img)
+    return img
 
 
 def output_image(filename, img):
@@ -47,8 +66,8 @@ def reduce_image_size(img):
     original_heigth, original_width = img.shape[:2]
 
     # Scaled Down Height and Widht,Converted to int
-    new_height = int(original_heigth * (1-REDUCTION_FACTOR))
-    new_widht = int(original_width * (1-REDUCTION_FACTOR))
+    new_height = int(original_heigth * (SIZE_FACTOR))
+    new_widht = int(original_width * (SIZE_FACTOR))
 
     # Reduce the size using Inbuilt openCV Function
     reduced_image = resize(img, (new_height, new_widht))
