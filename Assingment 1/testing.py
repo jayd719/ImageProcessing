@@ -18,7 +18,7 @@ SIZE_FACTOR = 2
 
 
 # Q1 Image Interpolation
-original_image = imread("Images/lena.tif",0)
+original_image = imread("Images/lena.tif", 0)
 reduced_image = reduce_image_size(original_image, SIZE_FACTOR)
 
 # Nearest neighbor interpolation implementation from scratch
@@ -43,7 +43,7 @@ output_image("lena_bicubic_cv.tif", resized_image_5)
 
 
 # Q2 Point Operations
-cameraman_image = imread("Images/cameraman.tif",0)
+cameraman_image = imread("Images/cameraman.tif", 0)
 
 # Find the negative of the image
 negative_image = negate_image(cameraman_image)
@@ -56,9 +56,13 @@ output_image("cameraman_power.tif", power_image)
 # Apply bit-plane slicing on the image
 sliced_images = bit_plane_slicing(cameraman_image)
 i = 0
+# Save each bit plane
+# Plane 8 - MSB,Plane 1 - LSB
 for image in sliced_images:
     output_image(f"cameraman_b{8-i}.tif", image)
     i += 1
 
-
-#Q3 Histogram Processing
+# Q3 Histogram Processing
+einstein_image = imread("Images/einstein.tif",0)
+einstein_equalized = histogram_equalization(einstein_image)
+output_image("einstein_equalized.tif", einstein_equalized)

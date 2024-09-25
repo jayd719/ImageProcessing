@@ -12,7 +12,7 @@ __updated__ = "2024-09-24"
 # IMPORTS
 from cv2 import resize, imread, imwrite
 from os import path, makedirs
-from numpy import zeros, uint8
+from numpy import zeros, uint8, histogram
 from math import floor, ceil
 
 # CONSTANTS
@@ -114,7 +114,6 @@ def nearnest_neighbour_interpolation_scratch(img, size_factor):
     # Sizes for the new image
     new_height = img.shape[0] * size_factor
     new_widht = img.shape[1] * size_factor
-
 
     # Numpy array to store new image
     new_image = zeros([new_height, new_widht], dtype=img.dtype)
@@ -249,12 +248,42 @@ def bit_plane_slicing(img):
         zeros([img.shape[0], img.shape[1]], dtype=uint8) for i in range(NUMBER_OF_BITS)
     ]
 
-    grey_scale_limit = 2**NUMBER_OF_BITS - 1
+    # Maximum range of grayscale levels
+    GRAYSCALE_RANGE = 2**NUMBER_OF_BITS - 1
+
     for row in range(img.shape[0]):
         for col in range(img.shape[1]):
             pixel_val = img[row, col]
+            # convert pixel data value into binary
             binary_value = bin(pixel_val)[2:].zfill(NUMBER_OF_BITS)
             for i in range(NUMBER_OF_BITS):
-                bit_planes[i][row][col] = int(binary_value[i]) * grey_scale_limit
+                # update the bit plane as per bit
+                bit_planes[i][row][col] = int(binary_value[i]) * GRAYSCALE_RANGE
 
     return bit_planes
+
+
+def histogram_equalization(img):
+    # Numpy array to store new image
+    new_image = zeros([img.shape[0], img.shape[1]], dtype=img.dtype)
+    max_pixel_value = img.max()
+
+    hist = zeros([256], dtype=int)
+    cum_freq = zeros([256], dtype=int)
+    new_pixel = zeros([256], dtype=int)
+
+    for row in img:
+        for pixel in row:
+            hist[pixel] += 1
+
+    cum_freq[0] = hist[0]
+    for i in range(1, 256):
+        cum_freq[i] = hist[i] + cum_freq[i - 1]
+
+    for i in range(256):
+        new_pixel[i] = (cum_freq[i] / [cum_freq[-1]]) * max_pixel_value
+
+    for row in img:
+        for pixel in row:
+            new_image[row, pixel] = new_pixel[pixel]
+    return new_image
