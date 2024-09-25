@@ -11,10 +11,14 @@ __updated__ = "2024-09-24"
 
 # IMPORTS
 from cv2 import resize, imread, imwrite
-from cv2 import INTER_NEAREST
 from os import path, makedirs
-from numpy import zeros
+from numpy import zeros, uint8
 from math import floor, ceil
+
+# CONSTANTS
+L = 255
+C = 255
+NUMBER_OF_BITS = 8
 
 
 def output_image(filename, img):
@@ -70,6 +74,29 @@ def reduce_image_size(img, size_factor):
     return reduced_image
 
 
+def interpolation_built_in(img, size_factor, interpolation):
+    """
+    -------------------------------------------------------
+    Resizes an image using a built-in interpolation method provided by OpenCV.
+    The interpolation method is specified by the user
+    Use: new_image = interpolation_built_in(img, size_factor, interpolation)
+    -------------------------------------------------------
+    Parameters:
+        img - the input image to be resized, represented as a NumPy array (ndarray)
+        size_factor - the scaling factor for resizing the image (float)
+        interpolation - the interpolation method to use  (int)
+    Returns:
+        new_image - the resized image using the specified interpolation method (ndarray)
+    -------------------------------------------------------
+    """
+    # Calculation of size for new image
+    new_height = img.shape[0] * size_factor
+    new_widht = img.shape[1] * size_factor
+
+    # Resize using built in function and return image
+    return resize(img, (new_height, new_widht), interpolation=interpolation)
+
+
 def nearnest_neighbour_interpolation_scratch(img, size_factor):
     """
     -------------------------------------------------------
@@ -88,11 +115,9 @@ def nearnest_neighbour_interpolation_scratch(img, size_factor):
     new_height = img.shape[0] * size_factor
     new_widht = img.shape[1] * size_factor
 
-    # shape of orginal Image
-    original_shape = img.shape[2]
 
     # Numpy array to store new image
-    new_image = zeros([new_height, new_widht, original_shape], dtype=img.dtype)
+    new_image = zeros([new_height, new_widht], dtype=img.dtype)
 
     # Update the pixels of the new image using nearest-neighbor interpolation
     for row in range(new_height):
@@ -104,34 +129,10 @@ def nearnest_neighbour_interpolation_scratch(img, size_factor):
     return new_image
 
 
-def nearest_neighbout_interpolation_built_int(img, size_factor):
-    """
-    -------------------------------------------------------
-    Performs nearest-neighbor interpolation on an image to resize it by a
-    specified size factor using the built in openCV function
-    Use: new_image = nearnest_neighbour_interpolation_scratch(img)
-    -------------------------------------------------------
-    Parameters:
-        img - the input image to be resized (ndarray)
-        size    - ratio to scale image by (int)
-    Returns:
-        new_image - the resized image (ndarray)
-    -------------------------------------------------------
-    """
-    # Calculation of size for new image
-    new_height = img.shape[0] * size_factor
-    new_widht = img.shape[1] * size_factor
-
-    # Resize using built in function and return image
-    return resize(img, (new_height, new_widht), interpolation=INTER_NEAREST)
-
-
 def bilinear_interpolation_from_scratch(img, size_factor):
     """
     -------------------------------------------------------
-    Resizes an image using bilinear interpolation. For each pixel in the new image,
-    the algorithm computes a weighted average of the four nearest pixels in the
-    original image.
+    Resizes an image using bilinear interpolation.
     Use: new_image = bilinear_interpolation_from_scratch(img, size_factor)
     -------------------------------------------------------
     Parameters:
@@ -145,11 +146,8 @@ def bilinear_interpolation_from_scratch(img, size_factor):
     new_height = img.shape[0] * size_factor
     new_widht = img.shape[1] * size_factor
 
-    # shape of orginal Image
-    original_shape = img.shape[2]
-
     # Numpy array to store new image
-    new_image = zeros([new_height, new_widht, original_shape], dtype=img.dtype)
+    new_image = zeros([new_height, new_widht], dtype=img.dtype)
 
     for row in range(new_height):
         for col in range(new_widht):
@@ -167,24 +165,96 @@ def bilinear_interpolation_from_scratch(img, size_factor):
             y_ceil = min(img.shape[1] - 1, ceil(y))
 
             if (x_floor == x_ceil) and (y_floor == y_ceil):
-                q = img[int(x), int(y), :]
+                q = img[int(x), int(y)]
             elif x_ceil == x_floor:
-                q1 = img[int(x), int(y_floor), :]
-                q2 = img[int(x), int(y_ceil), :]
+                q1 = img[int(x), int(y_floor)]
+                q2 = img[int(x), int(y_ceil)]
                 q = q1 * (y_ceil - y) + q2 * (y - y_floor)
 
             elif y_ceil == y_floor:
-                q1 = img[int(x_floor), int(y), :]
-                q2 = img[int(x_ceil), int(y), :]
+                q1 = img[int(x_floor), int(y)]
+                q2 = img[int(x_ceil), int(y)]
                 q = (q1 * (x_ceil - x)) + (q2 * (x - x_floor))
 
             else:
-                v1 = img[x_floor, y_floor, :]
-                v2 = img[x_ceil, y_floor, :]
-                v3 = img[x_floor, y_ceil, :]
-                v4 = img[x_ceil, y_ceil, :]
+                v1 = img[x_floor, y_floor]
+                v2 = img[x_ceil, y_floor]
+                v3 = img[x_floor, y_ceil]
+                v4 = img[x_ceil, y_ceil]
                 q1 = v1 * (x_ceil - x) + v2 * (x - x_floor)
                 q2 = v3 * (x_ceil - x) + v4 * (x - x_floor)
                 q = q1 * (y_ceil - y) + q2 * (y - y_floor)
             new_image[row, col] = q
     return new_image
+
+
+def negate_image(img):
+    """
+    -------------------------------------------------------
+    Negates an image by inverting the pixel values.
+    Use: negated_img = negate_image(img)
+    -------------------------------------------------------
+    Parameters:
+        img - the input image to be negated (ndarray)
+    Returns:
+        negated_img - the negated image (ndarray)
+    -------------------------------------------------------
+    """
+    # create new image
+    new_image = zeros([img.shape[0], img.shape[1]], dtype=img.dtype)
+
+    # update new image with inverted values from old image
+    for row in range(img.shape[0]):
+        for col in range(img.shape[1]):
+            new_image[row, col] = L - 1 - img[row, col]
+    return new_image
+
+
+def power_law_transformation(img, gamma):
+    """
+    -------------------------------------------------------
+    Applies a power-law (gamma) transformation to an image.
+    Use: transformed_img = power_law_transformation(img, gamma)
+    -------------------------------------------------------
+    Parameters:
+        img - the input image to be transformed, represented as a NumPy array (ndarray)
+        gamma - the gamma correction factor (float > 0)
+    Returns:
+        transformed_img - the image after applying the power-law transformation (ndarray)
+    -------------------------------------------------------
+    """
+    # create new image
+    new_image = zeros([img.shape[0], img.shape[1]], dtype=img.dtype)
+
+    for row in range(img.shape[0]):
+        for col in range(img.shape[1]):
+            new_image[row, col] = C * ((img[row, col] / C) ** gamma)
+
+    return new_image
+
+
+def bit_plane_slicing(img):
+    """
+    -------------------------------------------------------
+    Performs bit-plane slicing on a grayscale image.
+    Use: bit_planes = bit_plane_slicing(img)
+    -------------------------------------------------------
+    Parameters:
+        img - the input grayscale image (single channel) represented as a NumPy array (ndarray)
+    Returns:
+        bit_planes - a list of binary images representing each bit plane (list of ndarrays)
+    -------------------------------------------------------
+    """
+    bit_planes = [
+        zeros([img.shape[0], img.shape[1]], dtype=uint8) for i in range(NUMBER_OF_BITS)
+    ]
+
+    grey_scale_limit = 2**NUMBER_OF_BITS - 1
+    for row in range(img.shape[0]):
+        for col in range(img.shape[1]):
+            pixel_val = img[row, col]
+            binary_value = bin(pixel_val)[2:].zfill(NUMBER_OF_BITS)
+            for i in range(NUMBER_OF_BITS):
+                bit_planes[i][row][col] = int(binary_value[i]) * grey_scale_limit
+
+    return bit_planes
