@@ -63,6 +63,7 @@ for image in sliced_images:
     i += 1
 
 # Q3 Histogram Processing
+# Apply histogram equalization on image
 einstein_image = imread("Images/einstein.tif",0)
 einstein_equalized = histogram_equalization(einstein_image)
 output_image("einstein_equalized.tif", einstein_equalized)

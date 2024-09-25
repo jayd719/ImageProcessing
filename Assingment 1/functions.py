@@ -236,6 +236,7 @@ def bit_plane_slicing(img):
     """
     -------------------------------------------------------
     Performs bit-plane slicing on a grayscale image.
+    Image at Index 0 = MSB
     Use: bit_planes = bit_plane_slicing(img)
     -------------------------------------------------------
     Parameters:
@@ -264,26 +265,42 @@ def bit_plane_slicing(img):
 
 
 def histogram_equalization(img):
+    """
+    -------------------------------------------------------
+    Performs histogram equalization on a grayscale image to improve contrast.
+    Use: equalized_img = histogram_equalization(img)
+    -------------------------------------------------------
+    Parameters:
+        img - the input grayscale image (ndarray)
+    Returns:
+        equalized_img - image after histogram equalization (ndarray)
+    -------------------------------------------------------
+    """
     # Numpy array to store new image
     new_image = zeros([img.shape[0], img.shape[1]], dtype=img.dtype)
     max_pixel_value = img.max()
 
+    # Arrays to store in computation values
     hist = zeros([256], dtype=int)
     cum_freq = zeros([256], dtype=int)
     new_pixel = zeros([256], dtype=int)
 
+    # Compute the histogram of the input image
     for row in img:
         for pixel in row:
             hist[pixel] += 1
 
     cum_freq[0] = hist[0]
+    # Compute cumulative frequency
     for i in range(1, 256):
         cum_freq[i] = hist[i] + cum_freq[i - 1]
 
+    # Normalize cumulative frequency to map pixel value
     for i in range(256):
         new_pixel[i] = (cum_freq[i] / [cum_freq[-1]]) * max_pixel_value
-
-    for row in img:
-        for pixel in row:
-            new_image[row, pixel] = new_pixel[pixel]
+        
+    # Map old pixel values to the new equalized values
+    for i in range(img.shape[0]):
+        for j in range(img.shape[1]):
+            new_image[i, j] = new_pixel[img[i, j]]
     return new_image
