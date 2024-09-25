@@ -64,6 +64,12 @@ for image in sliced_images:
 
 # Q3 Histogram Processing
 # Apply histogram equalization on image
-einstein_image = imread("Images/einstein.tif",0)
+einstein_image = imread("Images/einstein.tif", 0)
 einstein_equalized = histogram_equalization(einstein_image)
 output_image("einstein_equalized.tif", einstein_equalized)
+
+# Apply histogram specification
+chest_x_ray1 = imread("Images/chest_x-ray1.jpeg")
+chest_x_ray2 = imread("Images/chest_x-ray2.jpeg")
+chest_x_ray3 = histogram_specification(master_image=chest_x_ray2, img=chest_x_ray1)
+output_image("chest_x-ray3.jpeg", chest_x_ray3)

@@ -304,3 +304,7 @@ def histogram_equalization(img):
         for j in range(img.shape[1]):
             new_image[i, j] = new_pixel[img[i, j]]
     return new_image
+
+
+def histogram_specification(master_image,img):
+    return img
