@@ -12,14 +12,14 @@ __updated__ = "2024-10-12"
 # IMPORTS
 from cv2 import resize, imread, imwrite
 from os import path, makedirs
-from numpy import zeros, array
+from numpy import zeros, array, exp, mgrid, square, pi, sum
 
 # FILTERS
 AVERAGING_FILTER_3x3 = array(
     [
-        [1, 2, 3],
-        [1, 2, 3],
-        [1, 2, 3],
+        [1, 1, 1],
+        [1, 1, 1],
+        [1, 1, 1],
     ]
 )
 
@@ -110,13 +110,106 @@ def remove_padding(padded_image, kernel):
     return padded_image[pad_height:-pad_height, pad_width:-pad_width]
 
 
-def average_smoothing_filter_sractch(img):
-    padded_image = pad_image(img, AVERAGING_FILTER_3x3)
-    pad_height = AVERAGING_FILTER_3x3.shape[0] - 1
-    pad_width = AVERAGING_FILTER_3x3.shape[1] - 1
+def filter_calculation(padded_image, row, col, kernel, filter_sum):
+    """
+    Calculates the smoothed value for a given pixel using the kernel.
 
+    Parameters:
+    padded_image (ndarray): The padded image.
+    row (int): The row index of the pixel to apply the filter on.
+    col (int): The column index of the pixel to apply the filter on.
+    kernel (ndarray): The kernel/filter matrix used for smoothing.
+
+    Returns:
+    float: The smoothed value for the specified pixel.
+    """
+    # Calculate half kernel dimensions
+    half_kernel_height = (kernel.shape[0] - 1) // 2
+    half_kernel_width = (kernel.shape[1] - 1) // 2
+
+    # Initialize the smoothened value and calculate the kernel sum
+    smoothen_value = 0
+
+    # Avoid division by zero in case the kernel sum is zero
+    if filter_sum == 0:
+        filter_sum = 1  # Fallback to avoid division by zero
+
+    # center of kernel
+    center_x = kernel.shape[0] // 2
+    center_y = kernel.shape[0] // 2
+
+    # Apply the filter by summing the product of the image pixels and kernel values
+    for s in range(-half_kernel_height, half_kernel_height + 1):
+        for t in range(-half_kernel_width, half_kernel_width + 1):
+            smoothen_value += (
+                padded_image[row + s, col + t] * kernel[center_x + s, center_y + t]
+            )
+
+    # Return smoothened value
+    return smoothen_value / filter_sum
+
+
+def apply_smoothening_filter(image, kernel):
+    """
+    Applies the given kernel/filter to the input image.
+
+    Parameters:
+    image (ndarray): The input image to be filtered.
+    kernel (ndarray): The kernel/filter used to process the image.
+
+    Returns:
+    ndarray: The filtered image with padding removed.
+    """
+    # Pad the image based on the kernel size
+    padded_image = pad_image(image, kernel)
+
+    # Calculate padding dimensions
+    pad_height = kernel.shape[0] - 1
+    pad_width = kernel.shape[1] - 1
+    filter_sum = sum(kernel)
+    # Apply the kernel to each pixel in the image (excluding padded borders)
     for row in range(pad_height, padded_image.shape[0] - pad_height):
         for col in range(pad_width, padded_image.shape[1] - pad_width):
-            print(padded_image[row, col])
+            # Perform filter calculation at the current position
+            padded_image[row, col] = filter_calculation(
+                padded_image, row, col, kernel, filter_sum
+            )
 
-    return remove_padding(padded_image, AVERAGING_FILTER_3x3)
+    # Remove padding and return the filtered image
+    return remove_padding(padded_image, kernel)
+
+
+def generate_gaussian_kernel(size, sigma, mean=0):
+    """
+    Generates a Gaussian kernel of the specified size and standard deviation (sigma),
+    with an optional mean adjustment.
+
+    Parameters:
+    size (int): The size of the kernel (must be odd).
+    sigma (float): The standard deviation of the Gaussian distribution.
+    mean (float, optional): The mean to adjust the grid coordinates. Default is 0.
+
+    Returns:
+    ndarray: A normalized 2D Gaussian kernel.
+    """
+    # Calculate the center of the kernel
+    center = size // 2
+
+    # Create a grid of (x, y) coordinates
+    x, y = mgrid[-center : center + 1, -center : center + 1]
+
+    # Adjust the grid coordinates by the mean (if specified)
+    x = x - mean
+    y = y - mean
+
+    # Calculate the Gaussian function
+    gaussian_kernel = (1 / (2 * pi * sigma**2)) * exp(
+        -(square(x) + square(y)) / (2 * sigma**2)
+    )
+
+    # Normalize the kernel
+    gaussian_kernel /= sum(gaussian_kernel)
+
+    return gaussian_kernel
+
+
