@@ -12,11 +12,13 @@ __updated__ = "2024-10-12"
 # IMPORTS
 from cv2 import resize, imread, imwrite
 from cv2 import Sobel, CV_64F, Laplacian, Canny
-from cv2 import blur, GaussianBlur
+from cv2 import blur, GaussianBlur, CV_16S, convertScaleAbs
 from os import path, makedirs
 from numpy import zeros, array, exp, mgrid, square, pi, sum, sqrt
 from numpy import uint8
 
+# constants
+DDEPTH = CV_16S
 
 # FILTERS
 AVERAGING_FILTER_3x3 = array(
@@ -281,17 +283,35 @@ def open_cv_sobel(image, kernel_size):
     # Calculate the gradient magnitude
     gradient_magnitude = sqrt(square(gx) + square(gy))
 
-    # Normalize the gradient to the range [0, 255]
+    # Normalize the gradient
     grad_norm = (gradient_magnitude * 255 / gradient_magnitude.max()).astype(uint8)
 
     return grad_norm
 
 
-def marr_hildreth_edge_detector(img):
-    # remove noise from image
-    noise_reduced_image = GaussianBlur(img,(3,3),1)
-    return img
+def marr_hildreth_edge_detector(image, kernel_size):
+    """
+    Applies the Marr-Hildreth edge detection algorithm to the input image.
+
+    Parameters:
+    image (ndarray): The input image on which to perform edge detection.
+    kernel_size (int): The size of the Gaussian kernel (must be odd).
+
+    Returns:
+    ndarray: The edge-detected image using the Marr-Hildreth method.
+    """
+    # Remove noise from the image using Gaussian blur
+    noise_reduced_image = GaussianBlur(image, (kernel_size, kernel_size), 1)
+
+    # Apply the Laplacian filter to detect edges
+    laplacian_image = Laplacian(noise_reduced_image, CV_64F, ksize=kernel_size)
+
+    # Convert the result to an absolute scale
+    edge_detected_image = convertScaleAbs(laplacian_image)
+
+    return edge_detected_image
 
 
 def canny_edge_detector(img):
-    return img
+    edge_detected_image = Canny(img,100,200)
+    return edge_detected_image
