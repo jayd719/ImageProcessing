@@ -322,9 +322,9 @@ def marr_hildreth_edge_detector(img, kernel_size):
     laplacian_image = Laplacian(noise_reduced_image, CV_64F, ksize=kernel_size)
 
     # Convert the result to an absolute scale
-    edge_detected_image = convertScaleAbs(laplacian_image)
+    img = convertScaleAbs(laplacian_image)
 
-    return edge_detected_image
+    return img
 
 
 def canny_edge_detector(img, threshold1=100, threshold2=200):
@@ -339,8 +339,8 @@ def canny_edge_detector(img, threshold1=100, threshold2=200):
     Returns:
     ndarray: The edge-detected image using the Canny algorithm.
     """
-    edge_detected_image = Canny(img, threshold1, threshold2)
-    return edge_detected_image
+    img = Canny(img, threshold1, threshold2)
+    return img
 
 
 def group_adjacent_pixels(img, connectivity=4):
@@ -368,11 +368,10 @@ def group_adjacent_pixels(img, connectivity=4):
         connections = CONTECTIVITY  # 8-connectivity
 
     # edge detected Image
-    edge_detected_image = canny_edge_detector(img)
 
     for row in range(image_height):
         for col in range(image_width):
-            if edge_detected_image[row, col] == 255 & labels[row, col] == 0:
+            if img[row, col] == 255 & labels[row, col] == 0:
                 q = deque()
                 labels[row, col] = cur_lab
                 q.append((row, col))
@@ -387,7 +386,7 @@ def group_adjacent_pixels(img, connectivity=4):
                             ny >= 0 and ny < image_width
                         ):
                             if (
-                                edge_detected_image[nx, ny] == 255
+                                img[nx, ny] == 255
                                 and labels[nx, ny] == 0
                             ):
                                 labels[nx, ny] = 1
