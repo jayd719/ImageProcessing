@@ -13,8 +13,8 @@ __updated__ = "2024-10-12"
 from functions import *
 
 
-original_image = imread("Images/input_images/lena.tif", 0)
-# original_image = imread("Images/input_images/lens.png", 0)
+# original_image = imread("Images/input_images/lena.tif", 0)
+original_image = imread("Images/input_images/cameraman.tif", 0)
 assert original_image is not None, "file could not be read"
 # Task 1
 # a) Average Smoothing Filter From Sratch
@@ -55,3 +55,8 @@ output_image("t3a.tif", marr_hildreth_image)
 # b) The Canny edge detector
 canny_edge_detected_image = canny_edge_detector(original_image)
 output_image("t3b.tif", marr_hildreth_image)
+
+# Task 4
+# Group Adjacent Pixels
+labels_four_way = group_adjacent_pixels(original_image, 4)
+output_image("t4a.tif", labels_four_way)

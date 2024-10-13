@@ -15,7 +15,8 @@ from cv2 import Sobel, CV_64F, Laplacian, Canny
 from cv2 import blur, GaussianBlur, CV_16S, convertScaleAbs
 from os import path, makedirs
 from numpy import zeros, array, exp, mgrid, square, pi, sum, sqrt
-from numpy import uint8
+from numpy import uint8, clip
+from collections import deque
 
 # constants
 DDEPTH = CV_16S
@@ -55,6 +56,17 @@ SOBEL_Gy = array(
         [-1, 0, 1],
     ]
 )
+
+CONTECTIVITY = [
+    (0, 1),
+    (1, 0),
+    (0, -1),
+    (-1, 0),  # 4-connectivity (right, down, left, up)
+    (1, 1),
+    (1, -1),
+    (-1, 1),
+    (-1, -1),
+]  # Diagonal neighbors for 8-connectivity
 
 
 def output_image(filename, img):
@@ -148,12 +160,12 @@ def filter_calculation(padded_image, row, col, kernel, filter_sum):
     half_kernel_height = (kernel.shape[0] - 1) // 2
     half_kernel_width = (kernel.shape[1] - 1) // 2
 
-    # Initialize the smoothened value and calculate the kernel sum
+    # Initialize the smoothened value
     smoothen_value = 0
 
     # Avoid division by zero in case the kernel sum is zero
     if filter_sum == 0:
-        filter_sum = 1  # Fallback to avoid division by zero
+        filter_sum = 1
 
     # center of kernel
     center_x = kernel.shape[0] // 2
@@ -292,7 +304,7 @@ def open_cv_sobel(image, kernel_size):
     return grad_norm
 
 
-def marr_hildreth_edge_detector(image, kernel_size):
+def marr_hildreth_edge_detector(img, kernel_size):
     """
     Applies the Marr-Hildreth edge detection algorithm to the input image.
 
@@ -304,7 +316,7 @@ def marr_hildreth_edge_detector(image, kernel_size):
     ndarray: The edge-detected image using the Marr-Hildreth method.
     """
     # Remove noise from the image using Gaussian blur
-    noise_reduced_image = GaussianBlur(image, (kernel_size, kernel_size), 1)
+    noise_reduced_image = GaussianBlur(img, (kernel_size, kernel_size), 1)
 
     # Apply the Laplacian filter to detect edges
     laplacian_image = Laplacian(noise_reduced_image, CV_64F, ksize=kernel_size)
@@ -315,6 +327,71 @@ def marr_hildreth_edge_detector(image, kernel_size):
     return edge_detected_image
 
 
-def canny_edge_detector(img):
-    edge_detected_image = Canny(img, 100, 200)
+def canny_edge_detector(img, threshold1=100, threshold2=200):
+    """
+    Applies the Canny edge detection algorithm to the input image.
+
+    Parameters:
+    image (ndarray): The input image on which to perform edge detection.
+    threshold1 (int, optional): The lower threshold for edge detection. Default is 100.
+    threshold2 (int, optional): The upper threshold for edge detection. Default is 200.
+
+    Returns:
+    ndarray: The edge-detected image using the Canny algorithm.
+    """
+    edge_detected_image = Canny(img, threshold1, threshold2)
     return edge_detected_image
+
+
+def group_adjacent_pixels(img, connectivity=4):
+    """
+    Groups adjacent pixels in an image based on 4 or 8-connectivity using edge detection.
+
+    Parameters:
+    image (ndarray): The input image to process.
+    connectivity (int, optional): The connectivity type (4 or 8). Default is 4-connectivity.
+
+    Returns:
+    ndarray: A labeled matrix where each group of connected pixels is assigned a unique label.
+    """
+    image_height = img.shape[0]
+    image_width = img.shape[1]
+
+    # Initialize label matrix
+    labels = zeros([image_height, image_width], dtype=img.dtype)
+    # Initialize Current Label
+    cur_lab = 1
+
+    if connectivity == 4:
+        connections = CONTECTIVITY[:5]  # 4-connectivity
+    else:
+        connections = CONTECTIVITY  # 8-connectivity
+
+    # edge detected Image
+    edge_detected_image = canny_edge_detector(img)
+
+    for row in range(image_height):
+        for col in range(image_width):
+            if edge_detected_image[row, col] == 255 & labels[row, col] == 0:
+                q = deque()
+                labels[row, col] = cur_lab
+                q.append((row, col))
+                while q:
+                    x, y = q.pop()
+
+                    for dx, dy in connections:
+                        nx = x + dx
+                        ny = y + dy
+
+                        if (nx >= 0 and nx < image_height) and (
+                            ny >= 0 and ny < image_width
+                        ):
+                            if (
+                                edge_detected_image[nx, ny] == 255
+                                and labels[nx, ny] == 0
+                            ):
+                                labels[nx, ny] = 1
+                                q.append((nx, ny))
+                cur_lab += 1
+
+    return labels
