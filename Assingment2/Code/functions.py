@@ -11,7 +11,8 @@ __updated__ = "2024-10-12"
 
 # IMPORTS
 from cv2 import resize, imread, imwrite
-from cv2 import Sobel, CV_64F
+from cv2 import Sobel, CV_64F, Laplacian, Canny
+from cv2 import blur, GaussianBlur
 from os import path, makedirs
 from numpy import zeros, array, exp, mgrid, square, pi, sum, sqrt
 from numpy import uint8
@@ -262,10 +263,35 @@ def apply_sobel_sharpening_filter(img):
     return remove_padding(padded_image, SOBEL_Gx)
 
 
-def open_cv_sobel(img, kernel_size):
-    gx = Sobel(img, CV_64F, 1, 0, ksize=kernel_size)
-    gy = Sobel(img, CV_64F, 0, 1, ksize=kernel_size)
+def open_cv_sobel(image, kernel_size):
+    """
+    Applies the Sobel filter to the input image to compute the gradient magnitude.
 
-    gradient = sqrt(square(gx) + square(gy))
-    grad_norm = (gradient * 255 / gradient.max()).astype(uint8)
+    Parameters:
+    image (ndarray): The input image on which to apply the Sobel filter.
+    kernel_size (int): The size of the Sobel kernel. Must be an odd number (e.g., 3, 5, 7).
+
+    Returns:
+    ndarray: The gradient magnitude of the image, normalized to the range [0, 255].
+    """
+
+    gx = Sobel(image, CV_64F, 1, 0, ksize=kernel_size)  # Gradient in x direction
+    gy = Sobel(image, CV_64F, 0, 1, ksize=kernel_size)  # Gradient in y direction
+
+    # Calculate the gradient magnitude
+    gradient_magnitude = sqrt(square(gx) + square(gy))
+
+    # Normalize the gradient to the range [0, 255]
+    grad_norm = (gradient_magnitude * 255 / gradient_magnitude.max()).astype(uint8)
+
     return grad_norm
+
+
+def marr_hildreth_edge_detector(img):
+    # remove noise from image
+    noise_reduced_image = GaussianBlur(img,(3,3),1)
+    return img
+
+
+def canny_edge_detector(img):
+    return img

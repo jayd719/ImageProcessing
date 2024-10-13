@@ -11,7 +11,6 @@ __updated__ = "2024-10-12"
 
 # IMPORTS
 from functions import *
-from cv2 import blur, GaussianBlur
 
 
 original_image = imread("Images/input_images/lena.tif", 0)
@@ -32,15 +31,22 @@ original_image = imread("Images/input_images/lena.tif", 0)
 # output_image("t1c.tif", updated_image)
 
 
-# Task 2
-# Inbuilt CV functions
-# Open CV inbuilt averaging function
-averaged_image = blur(original_image, (3, 3))
-output_image("t2a.tif", averaged_image)
+# # Task 2
+# # Inbuilt CV functions
+# # a) Open CV inbuilt averaging function
+# averaged_image = blur(original_image, (3, 3))
+# output_image("t2a.tif", averaged_image)
 
-# Open CV in built gaussian function
-gaussian_image = GaussianBlur(original_image, (7, 7), 1)
-output_image("t2b.tif", averaged_image)
+# # b) Open CV in built gaussian function
+# gaussian_image = GaussianBlur(original_image, (7, 7), 1)
+# output_image("t2b.tif", averaged_image)
 
-sobel_image = open_cv_sobel(original_image, 3)
-output_image("t2c.tif", sobel_image)
+# # c) OpenCV built in function for sobel sharpening filter
+# sobel_image = open_cv_sobel(original_image, 3)
+# output_image("t2c.tif", sobel_image)
+
+
+# Task 3
+# a) The Marr-Hildreth edge detector
+marr_hildreth_image = marr_hildreth_edge_detector(original_image)
+output_image("t3a.tif", marr_hildreth_edge_detector)
