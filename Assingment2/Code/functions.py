@@ -11,8 +11,11 @@ __updated__ = "2024-10-12"
 
 # IMPORTS
 from cv2 import resize, imread, imwrite
+from cv2 import Sobel, CV_64F
 from os import path, makedirs
-from numpy import zeros, array, exp, mgrid, square, pi, sum
+from numpy import zeros, array, exp, mgrid, square, pi, sum, sqrt
+from numpy import uint8
+
 
 # FILTERS
 AVERAGING_FILTER_3x3 = array(
@@ -32,6 +35,21 @@ AVERAGING_FILTER_7x7 = array(
         [1, 2, 3, 4, 5, 6, 7],
         [1, 2, 3, 4, 5, 6, 7],
         [1, 2, 3, 4, 5, 6, 7],
+    ]
+)
+
+SOBEL_Gx = array(
+    [
+        [-1, -2, -1],
+        [0, 0, 0],
+        [1, 2, 1],
+    ]
+)
+SOBEL_Gy = array(
+    [
+        [-1, 0, 1],
+        [-2, 0, 2],
+        [-1, 0, 1],
     ]
 )
 
@@ -213,3 +231,41 @@ def generate_gaussian_kernel(size, sigma, mean=0):
     return gaussian_kernel
 
 
+def apply_sobel_sharpening_filter(img):
+    """
+    Applies the Sobel sharpening filter to an input image.
+
+    Parameters:
+        img - The input image (ndarray).
+
+    Returns:
+        The filtered image (ndarray).
+    """
+    padded_image = pad_image(img, SOBEL_Gx)
+
+    # Calculate padding dimensions
+    pad_height = SOBEL_Gx.shape[0] - 1
+    pad_width = SOBEL_Gx.shape[1] - 1
+
+    # Calculate half kernel dimensions
+    kernel_h = (SOBEL_Gx.shape[0] - 1) // 2
+    kernel_w = (SOBEL_Gx.shape[1] - 1) // 2
+
+    for row in range(pad_height, padded_image.shape[0] - pad_height):
+        for col in range(pad_width, padded_image.shape[1] - pad_width):
+            neighbourhood = padded_image[row : row + 3, col : col + 3]
+            gx = sum(SOBEL_Gx * neighbourhood)
+            gy = sum(SOBEL_Gy * neighbourhood)
+
+            padded_image[row, col] = sqrt(square(gx) + square(gy))
+    # Remove padding and return the filtered image
+    return remove_padding(padded_image, SOBEL_Gx)
+
+
+def open_cv_sobel(img, kernel_size):
+    gx = Sobel(img, CV_64F, 1, 0, ksize=kernel_size)
+    gy = Sobel(img, CV_64F, 0, 1, ksize=kernel_size)
+
+    gradient = sqrt(square(gx) + square(gy))
+    grad_norm = (gradient * 255 / gradient.max()).astype(uint8)
+    return grad_norm
