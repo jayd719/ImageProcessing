@@ -254,15 +254,19 @@ def apply_sobel_sharpening_filter(img):
     kernel_h = (SOBEL_Gx.shape[0] - 1) // 2
     kernel_w = (SOBEL_Gx.shape[1] - 1) // 2
 
+    gx = zeros([padded_image.shape[0], padded_image.shape[1]], dtype=img.dtype)
+    gy = zeros([padded_image.shape[0], padded_image.shape[1]], dtype=img.dtype)
+
     for row in range(pad_height, padded_image.shape[0] - pad_height):
         for col in range(pad_width, padded_image.shape[1] - pad_width):
-            neighbourhood = padded_image[row : row + 3, col : col + 3]
-            gx = sum(SOBEL_Gx * neighbourhood)
-            gy = sum(SOBEL_Gy * neighbourhood)
+            neighbourhood = padded_image[row - 1 : row + 2, col - 1 : col + 2]
+            gx[row, col] = sum(SOBEL_Gx * neighbourhood)
+            gy[row, col] = sum(SOBEL_Gy * neighbourhood)
 
-            padded_image[row, col] = sqrt(square(gx) + square(gy))
+    sharpened_image = padded_image + gx + gy
+
     # Remove padding and return the filtered image
-    return remove_padding(padded_image, SOBEL_Gx)
+    return remove_padding(sharpened_image, SOBEL_Gx).astype(uint8)
 
 
 def open_cv_sobel(image, kernel_size):
@@ -280,8 +284,7 @@ def open_cv_sobel(image, kernel_size):
     gx = Sobel(image, CV_64F, 1, 0, ksize=kernel_size)  # Gradient in x direction
     gy = Sobel(image, CV_64F, 0, 1, ksize=kernel_size)  # Gradient in y direction
 
-    # Calculate the gradient magnitude
-    gradient_magnitude = sqrt(square(gx) + square(gy))
+    gradient_magnitude = gx + gy
 
     # Normalize the gradient
     grad_norm = (gradient_magnitude * 255 / gradient_magnitude.max()).astype(uint8)
@@ -313,5 +316,5 @@ def marr_hildreth_edge_detector(image, kernel_size):
 
 
 def canny_edge_detector(img):
-    edge_detected_image = Canny(img,100,200)
+    edge_detected_image = Canny(img, 100, 200)
     return edge_detected_image
