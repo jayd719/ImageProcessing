@@ -10,11 +10,13 @@ __updated__ = "2024-10-30"
 """
 
 from os import path, makedirs
+import numpy as np
 import cv2 as cv
+from matplotlib import pyplot as plt
 
 # Contants
-OUTPUT = "Output_images"
-EDGE_MAPS = "Edge_maps"
+OUTPUT_FOLDER = "Output_images"
+EDGE_MAPS_FOLDER = "Edge_maps"
 
 
 def output_image(filename, folder, img):
@@ -43,17 +45,41 @@ def output_image(filename, folder, img):
     return None
 
 
-def SIFT(img):
-    # convert the image into grayscale.
-    gray_image = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+def hough_circle_transform(img, edge_map, threshold):
+    circles = cv.HoughCircles(
+        edge_map,
+        cv.HOUGH_GRADIENT,
+        dp=1,
+        minDist=600,
+        param1=200,
+        param2=15,
+        minRadius=0,
+        maxRadius=0,
+    )
 
-    threshold1 = 100
-    threshold2 = 200
-    edge_map = cv.Canny(img, threshold1, threshold2)
-
-    output_image("file.tif", EDGE_MAPS, edge_map)
-    # construct shift object
-    shift = cv.SIFT_create()
-    kp = shift.detect(gray_image, None)
-    img = cv.drawKeypoints(gray_image, kp, img)
+    circles = np.uint16(np.around(circles))
+    for circle in circles[0, :]:
+        cv.circle(img, (circle[0], circle[1]), circle[2], (0, 0, 255), 2)
     return img
+
+
+def main(image_name):
+
+    img = cv.imread(f"Input_Images/{image_name}")
+    # update the image name for saving the resultant images
+    image_name = image_name.split(".")[0]
+
+    gray_image = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    # apply Guassian Blurr to reduce the noise in image using a 3x3 mask and sigma of 3.
+    blurred_image = cv.GaussianBlur(gray_image, (3, 3), 0)
+
+    _, binary_image = cv.threshold(blurred_image, 160, 255, cv.THRESH_BINARY)
+    # apply canny edge dector to the blurred image
+    edge_map = cv.Canny(binary_image, 100, 200, apertureSize=3)
+    output_image(f"{image_name}_edge.tif", EDGE_MAPS_FOLDER, edge_map)
+
+    cv.imshow("this", img)
+    cv.waitKey(0)
+
+
+main("iris1.tif")
