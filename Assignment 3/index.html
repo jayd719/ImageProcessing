@@ -5,92 +5,200 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpenCV Iris Detection Project</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="Code/styles.css">
-    </head>
-<body class="nunito">
-<div class="container col-lg-10 py-5">
-        <h1 class="mb-5">OpenCV Iris Detection Project</h1>
-        <p class="lead mb-4">
-            This project demonstrates the application of OpenCV for iris detection in human eyes. 
-            The images below show the original input images on the left and the processed output 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://jayd719.github.io/assets/reports/styles.css" />
+</head>
+<body class="bg-gray-100 nunito">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-5xl font-bold mb-6  ">OpenCV Iris Detection Project</h1>
+        <p class="text-lg text-gray-700 mb-6">
+            This project demonstrates the application of OpenCV for iris detection in human eyes.
+            The images below show the original input images on the left and the processed output
             images with detected irises on the right.
         </p>
-        
-        
-        <h2 class="mt-5 mb-2">Methodology</h2>
-        <p class="lead mb-4">
-            To achieve the above-men=oned task, the procedure used involves image preprocessing steps, followed
+        <h2 class="text-2xl font-semibold mb-1">Methodology</h2>
+        <p class="text-md text-gray-700 mb-1">
+            To achieve the above-mentioned task, the procedure used involves image preprocessing steps, followed
             by Hough Circle Transform.
         </p>
-        
-        
-        <div id='images'><div>
-                        <div class="container col-lg-8 border rounded-3 mb-5 overflow-hidden p-0">
-                            <div class="d-flex">
-                                <img class="img w-50" src="Input_Images/iris4.jpeg">
-                                <img class="img w-50" src="Output_Images/iris1_output.jpeg">
-                            </div>
-                            <div class="card-body p-4">
-                                <h5 class="card-title">Image Set 1</h5>
-                                <p class="card-text">This project demonstrates the application of OpenCV for iris detection in human eyes. The images below show the original input images on the left and the processed output images with detected irises on the right.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="container col-lg-8 border rounded-3 mb-5 overflow-hidden p-0">
-                            <div class="d-flex">
-                                <img class="img w-50" src="Input_Images/iris3.jpeg">
-                                <img class="img w-50" src="Output_Images/iris3_output.jpeg">
-                            </div>
-                            <div class="card-body p-4">
-                                <h5 class="card-title">Image Set 2</h5>
-                                <p class="card-text">This project demonstrates the application of OpenCV for iris detection in human eyes. The images below show the original input images on the left and the processed output images with detected irises on the right.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="container col-lg-8 border rounded-3 mb-5 overflow-hidden p-0">
-                            <div class="d-flex">
-                                <img class="img w-50" src="Input_Images/iris2.jpeg">
-                                <img class="img w-50" src="Output_Images/iris5_output.jpeg">
-                            </div>
-                            <div class="card-body p-4">
-                                <h5 class="card-title">Image Set 3</h5>
-                                <p class="card-text">This project demonstrates the application of OpenCV for iris detection in human eyes. The images below show the original input images on the left and the processed output images with detected irises on the right.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="container col-lg-8 border rounded-3 mb-5 overflow-hidden p-0">
-                            <div class="d-flex">
-                                <img class="img w-50" src="Input_Images/iris1.jpeg">
-                                <img class="img w-50" src="Output_Images/iris2_output.jpeg">
-                            </div>
-                            <div class="card-body p-4">
-                                <h5 class="card-title">Image Set 4</h5>
-                                <p class="card-text">This project demonstrates the application of OpenCV for iris detection in human eyes. The images below show the original input images on the left and the processed output images with detected irises on the right.</p>
-                            </div>
-                        </div>
-                    </div>
-                    </div><script src="Code/createIndexhtml.js"></script>
-        
-        <h2 class="mb-4">References</h2>
-        <ul>
+        <div id='images'>
+    <div class="max-w-4xl mx-auto my-6">
+        <div class="bg-white shadow-md rounded overflow-hidden">
+            <div class="flex">
+                <img class="w-1/2 object-cover" src="Input_Images/iris3.jpeg" alt="Input Image">
+                <img class="w-1/2 object-cover" src="Output_Images/iris4_output.jpeg" alt="Output Image">
+            </div>
+            <div class="p-4">
+                <h5 class="text-lg font-semibold">Image Set 1</h5>
+                <p class="text-gray-600 text-sm">
+                    This project demonstrates the application of OpenCV for iris detection in human eyes.
+                    The images below show the original input images on the left and the processed output
+                    images with detected irises on the right.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="max-w-4xl mx-auto my-6">
+        <div class="bg-white shadow-md rounded overflow-hidden">
+            <div class="flex">
+                <img class="w-1/2 object-cover" src="Input_Images/iris2.jpeg" alt="Input Image">
+                <img class="w-1/2 object-cover" src="Output_Images/iris4_output.jpeg" alt="Output Image">
+            </div>
+            <div class="p-4">
+                <h5 class="text-lg font-semibold">Image Set 2</h5>
+                <p class="text-gray-600 text-sm">
+                    This project demonstrates the application of OpenCV for iris detection in human eyes.
+                    The images below show the original input images on the left and the processed output
+                    images with detected irises on the right.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="max-w-4xl mx-auto my-6">
+        <div class="bg-white shadow-md rounded overflow-hidden">
+            <div class="flex">
+                <img class="w-1/2 object-cover" src="Input_Images/iris5.jpeg" alt="Input Image">
+                <img class="w-1/2 object-cover" src="Output_Images/iris1_output.jpeg" alt="Output Image">
+            </div>
+            <div class="p-4">
+                <h5 class="text-lg font-semibold">Image Set 3</h5>
+                <p class="text-gray-600 text-sm">
+                    This project demonstrates the application of OpenCV for iris detection in human eyes.
+                    The images below show the original input images on the left and the processed output
+                    images with detected irises on the right.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="max-w-4xl mx-auto my-6">
+        <div class="bg-white shadow-md rounded overflow-hidden">
+            <div class="flex">
+                <img class="w-1/2 object-cover" src="Input_Images/iris4.jpeg" alt="Input Image">
+                <img class="w-1/2 object-cover" src="Output_Images/iris1_output.jpeg" alt="Output Image">
+            </div>
+            <div class="p-4">
+                <h5 class="text-lg font-semibold">Image Set 4</h5>
+                <p class="text-gray-600 text-sm">
+                    This project demonstrates the application of OpenCV for iris detection in human eyes.
+                    The images below show the original input images on the left and the processed output
+                    images with detected irises on the right.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="max-w-4xl mx-auto my-6">
+        <div class="bg-white shadow-md rounded overflow-hidden">
+            <div class="flex">
+                <img class="w-1/2 object-cover" src="Input_Images/iris5.jpeg" alt="Input Image">
+                <img class="w-1/2 object-cover" src="Output_Images/iris2_output.jpeg" alt="Output Image">
+            </div>
+            <div class="p-4">
+                <h5 class="text-lg font-semibold">Image Set 5</h5>
+                <p class="text-gray-600 text-sm">
+                    This project demonstrates the application of OpenCV for iris detection in human eyes.
+                    The images below show the original input images on the left and the processed output
+                    images with detected irises on the right.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="max-w-4xl mx-auto my-6">
+        <div class="bg-white shadow-md rounded overflow-hidden">
+            <div class="flex">
+                <img class="w-1/2 object-cover" src="Input_Images/iris4.jpeg" alt="Input Image">
+                <img class="w-1/2 object-cover" src="Output_Images/iris3_output.jpeg" alt="Output Image">
+            </div>
+            <div class="p-4">
+                <h5 class="text-lg font-semibold">Image Set 6</h5>
+                <p class="text-gray-600 text-sm">
+                    This project demonstrates the application of OpenCV for iris detection in human eyes.
+                    The images below show the original input images on the left and the processed output
+                    images with detected irises on the right.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="max-w-4xl mx-auto my-6">
+        <div class="bg-white shadow-md rounded overflow-hidden">
+            <div class="flex">
+                <img class="w-1/2 object-cover" src="Input_Images/iris3.jpeg" alt="Input Image">
+                <img class="w-1/2 object-cover" src="Output_Images/iris5_output.jpeg" alt="Output Image">
+            </div>
+            <div class="p-4">
+                <h5 class="text-lg font-semibold">Image Set 7</h5>
+                <p class="text-gray-600 text-sm">
+                    This project demonstrates the application of OpenCV for iris detection in human eyes.
+                    The images below show the original input images on the left and the processed output
+                    images with detected irises on the right.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="max-w-4xl mx-auto my-6">
+        <div class="bg-white shadow-md rounded overflow-hidden">
+            <div class="flex">
+                <img class="w-1/2 object-cover" src="Input_Images/iris2.jpeg" alt="Input Image">
+                <img class="w-1/2 object-cover" src="Output_Images/iris5_output.jpeg" alt="Output Image">
+            </div>
+            <div class="p-4">
+                <h5 class="text-lg font-semibold">Image Set 8</h5>
+                <p class="text-gray-600 text-sm">
+                    This project demonstrates the application of OpenCV for iris detection in human eyes.
+                    The images below show the original input images on the left and the processed output
+                    images with detected irises on the right.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="max-w-4xl mx-auto my-6">
+        <div class="bg-white shadow-md rounded overflow-hidden">
+            <div class="flex">
+                <img class="w-1/2 object-cover" src="Input_Images/iris1.jpeg" alt="Input Image">
+                <img class="w-1/2 object-cover" src="Output_Images/iris2_output.jpeg" alt="Output Image">
+            </div>
+            <div class="p-4">
+                <h5 class="text-lg font-semibold">Image Set 9</h5>
+                <p class="text-gray-600 text-sm">
+                    This project demonstrates the application of OpenCV for iris detection in human eyes.
+                    The images below show the original input images on the left and the processed output
+                    images with detected irises on the right.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="max-w-4xl mx-auto my-6">
+        <div class="bg-white shadow-md rounded overflow-hidden">
+            <div class="flex">
+                <img class="w-1/2 object-cover" src="Input_Images/iris1.jpeg" alt="Input Image">
+                <img class="w-1/2 object-cover" src="Output_Images/iris3_output.jpeg" alt="Output Image">
+            </div>
+            <div class="p-4">
+                <h5 class="text-lg font-semibold">Image Set 10</h5>
+                <p class="text-gray-600 text-sm">
+                    This project demonstrates the application of OpenCV for iris detection in human eyes.
+                    The images below show the original input images on the left and the processed output
+                    images with detected irises on the right.
+                </p>
+            </div>
+        </div>
+    </div>
+    </div><script src="https://jayd719.github.io/assets/reports/createIndexhtml.js"></script>
+        <h2 class="text-2xl font-semibold mt-8 mb-4">References</h2>
+        <ul class="list-disc pl-8 text-gray-700">
             <li>
-                Daway, H. G., Kareem, H. H., & Hashim, A. R. (2018, October 1). Pupil detection based on color
-                difference and circular Hough transform. Daway | International Journal of Electrical and Computer
-                Engineering (IJECE). https://ijece.iaescore.com/index.php/IJECE/article/view/8049/11031
+                Daway, H. G., Kareem, H. H., & Hashim, A. R. (2018). Pupil detection based on color difference 
+                and circular Hough transform.
             </li>
-            <li>
-                Daway, H. G., Kareem, H. H., & Hashim, A. R. (2018, October 1). Pupil detection based on color
-                difference and circular Hough transform. Daway | International Journal of Electrical and Computer
-                Engineering (IJECE). https://ijece.iaescore.com/index.php/IJECE/article/view/8049/11031
-            </li>
-        <ul>
-</div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        </ul>
+    </div>
 </body>
 </html>
