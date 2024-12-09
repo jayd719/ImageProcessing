@@ -1,0 +1,55 @@
+@startuml arch
+!define RECTANGLE_RECT <<rectangle>>
+
+title ANPR Software Company Architecture
+left to right direction
+skinparam rectangle {
+  BackgroundColor LightGray
+  BorderColor Black
+  FontColor Black
+}
+
+rectangle "Camera Layer" as Cameras {
+  rectangle "ANPR Cameras" <<RECTANGLE_RECT>> #LightBlue
+  rectangle "Standard CCTV Cameras" <<RECTANGLE_RECT>> #LightBlue
+}
+rectangle "Edge Computing Layer" as Edge {
+  rectangle "Edge Devices\n(e.g., NVIDIA Jetson)" <<RECTANGLE_RECT>> #YellowGreen
+}
+
+rectangle "Processing Layer" as Processing {
+  rectangle "GPU Servers\n(e.g., NVIDIA Quadro)" <<RECTANGLE_RECT>> #Orange
+  rectangle "Workstations\n(for development)" <<RECTANGLE_RECT>> #Orange
+}
+
+rectangle "Networking Layer" as Network {
+  rectangle "Network Switches" <<RECTANGLE_RECT>> #LightCoral
+  rectangle "Routers" <<RECTANGLE_RECT>> #LightCoral
+  rectangle "Ethernet Cabling" <<RECTANGLE_RECT>> #LightCoral
+}
+
+rectangle "Storage Layer" as Storage {
+rectangle "NAS" <<RECTANGLE_RECT>> #LightGreen
+  rectangle "Cloud Storage" <<RECTANGLE_RECT>> #LightGreen
+  rectangle "External Backup" <<RECTANGLE_RECT>> #LightGreen
+}
+
+rectangle "Software Layer" as Software {
+  rectangle "ANPR Software\n(OpenCV, OCR, AI Models)" <<RECTANGLE_RECT>> #Yellow
+  rectangle "Database\n(for vehicle records)" <<RECTANGLE_RECT>> #Yellow
+  
+}
+
+rectangle "Output and User Layer" as User {
+  rectangle "Monitoring Dashboards" <<RECTANGLE_RECT>> #PeachPuff
+  rectangle "API Integrations" <<RECTANGLE_RECT>> #PeachPuff
+}
+
+Cameras -down-> Edge
+Edge -down-> Processing
+Processing -up-> Software
+Processing -down-> Network
+Processing -down-> Storage
+Software -down-> User
+
+@enduml
