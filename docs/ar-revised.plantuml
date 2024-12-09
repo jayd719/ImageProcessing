@@ -1,0 +1,85 @@
+@startuml ar2
+skinparam rectangle {
+    BackgroundColor #F5F5F5
+    BorderColor #000000
+    FontColor #000000
+}
+
+title ANPR Architecture (Revised)
+
+package "Camera Layer" {
+    rectangle "Standard CCTV Cameras" as Camera1 #ADD8E6
+    rectangle "ANPR Cameras" as Camera2 #ADD8E6
+    rectangle "Calibration Tools" as Camera3 #ADD8E6
+}
+
+package "Edge Computing Layer" {
+    rectangle "Edge Devices (e.g., NVIDIA Jetson)" as Edge1 #90EE90
+    rectangle "Resource Monitoring" as Edge2 #90EE90
+    rectangle "OTA Updates" as Edge3 #90EE90
+}
+
+package "Processing Layer" {
+    rectangle "Workstations (for development)" as Processing1 #FFA500
+    rectangle "GPU Servers (e.g., NVIDIA Quadro)" as Processing2 #FFA500
+    rectangle "AI Model Optimization" as Processing3 #FFA500
+    rectangle "Hybrid Processing" as Processing4 #FFA500
+}
+
+package "Networking Layer" {
+    rectangle "Routers" as Network1 #FF9999
+    rectangle "Network Switches" as Network2 #FF9999
+    rectangle "Ethernet Cabling" as Network3 #FF9999
+    rectangle "Secure Communications (VPN, TLS)" as Network4 #FF9999
+    rectangle "Network Bandwidth Monitoring" as Network5 #FF9999
+}
+
+package "Software Layer" {
+    rectangle "Database (for vehicle records)" as Software1 #FFFF00
+    rectangle "ANPR Software (OpenCV, OCR, AI Models)" as Software2 #FFFF00
+    rectangle "Real-Time Data Sync" as Software3 #FFFF00
+    rectangle "Feedback Loop for AI Model Training" as Software4 #FFFF00
+}
+
+package "Output and User Layer" {
+    rectangle "API Integrations" as Output1 #FFDAB9
+    rectangle "Monitoring Dashboards" as Output2 #FFDAB9
+    rectangle "Customizable Dashboards" as Output3 #FFDAB9
+    rectangle "Alert Systems" as Output4 #FFDAB9
+}
+
+package "Storage Layer" {
+    rectangle "Cloud Storage" as Storage1 #90EE90
+    rectangle "NAS (Network Attached Storage)" as Storage2 #90EE90
+    rectangle "External Backup" as Storage3 #90EE90
+    rectangle "Storage Policy Management" as Storage4 #90EE90
+    rectangle "Disaster Recovery Plan" as Storage5 #90EE90
+}
+
+Camera1 --> Edge1
+Camera2 --> Edge1
+Camera3 --> Edge1
+Edge1 --> Processing1
+Edge1 --> Processing2
+Processing2 --> Processing3
+Processing2 --> Processing4
+Processing1 --> Software1
+Processing1 --> Software2
+Software2 --> Software3
+Software3 --> Software4
+Software1 --> Storage1
+Software1 --> Storage2
+Storage1 --> Storage3
+Storage1 --> Storage4
+Storage1 --> Storage5
+Storage2 --> Storage5
+Software3 --> Output1
+Software3 --> Output2
+Output2 --> Output3
+Output2 --> Output4
+Edge1 --> Network1
+Edge1 --> Network2
+Edge1 --> Network3
+Network1 --> Network4
+Network1 --> Network5
+@enduml
