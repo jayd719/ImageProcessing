@@ -1,7 +1,7 @@
 @startuml arch
 !define RECTANGLE_RECT <<rectangle>>
 
-title ANPR Software Company Architecture
+title ANPR Architecture
 left to right direction
 skinparam rectangle {
   BackgroundColor LightGray
