@@ -1,0 +1,40 @@
+@startuml ar3
+skinparam rectangle {
+    BackgroundColor White
+    BorderColor Black
+    FontColor Black
+}
+
+skinparam shadowing false
+
+' Camera Layer
+rectangle "Camera Layer" as CameraLayer {
+    [Standard CCTV Cameras] #lightblue
+    [ANPR Cameras] #lightblue
+}
+
+' Processing Layer
+rectangle "Processing Layer" as ProcessingLayer {
+    [Edge Devices (e.g., NVIDIA Jetson)] #lightgreen
+    [GPU Servers (e.g., NVIDIA Quadro)] #lightgreen
+}
+
+' Storage Layer
+rectangle "Storage Layer" as StorageLayer {
+    [Cloud Storage] #lightgreen
+    [NAS] #lightgreen
+    [External Backup] #lightgreen
+}
+
+' Software Layer
+rectangle "Software Layer" as SoftwareLayer {
+    [ANPR Software (OpenCV, OCR, AI Models)] #yellow
+    [Database (for vehicle records)] #yellow
+    [Monitoring Dashboards] #yellow
+}
+
+' Connections
+CameraLayer --> ProcessingLayer
+ProcessingLayer --> SoftwareLayer
+SoftwareLayer --> StorageLayer
+@enduml
